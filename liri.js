@@ -1,15 +1,110 @@
-var Twitter = require('twitter');
- 
-var client = new Twitter({
-  consumer_key: '',
-  consumer_secret: '',
-  access_token_key: '',
-  access_token_secret: ''
-});
- 
-var params = {screen_name: 'nodejs'};
-client.get('statuses/user_timeline', params, function(error, tweets, response) {
-  if (!error) {
-    console.log(tweets);
-  }
-});
+//hide keys
+require("dotenv").config();
+
+//var for project
+var keys = require("./keys.js");
+var fs = require("fs");
+var Spotify =require('node-spotify-api');
+var spotify= new Spotify(keys.spotify);
+var request= require("request");
+var movieName = process.argv[3];
+var liriReturn = process.argv[2];
+var weather = require("weather-js");
+
+switch (liriReturn) {
+    case "spotify-this-song":
+    break;
+    
+    case "movie-this":
+    break;
+
+    case "weather":
+    break;
+
+    case "do-what-it-says":
+    break;
+
+default: console.log("\n" + "type any command after 'node liri.js':  "  + "\n" +
+    "spotify-this-song 'any song title' " + "\n" + 
+    "movie-this 'any movie title' " + "\n" +
+    "weather 'any city' "+ "\n" +
+    "do-what-it-says " + "\n" +
+    "Use quotes for multiword titles!");
+
+
+    //spotify function//
+function spotifyThisSong(trackName) {
+    var trackName = process.argv[3];
+    if(!trackName){
+        trackName="The Sign";
+    };
+    songRequest = trackName;
+    spotify.search({
+        type:"track",
+        query: songRequest
+    },
+    function(err,data){
+        if(!err){
+            var trackInfo = data.tracks.items;
+            for  (var i = 0;i <5; i++){
+                if (trackInfo[i]!=undefined){
+                    var spotifyResults =
+                    "Artist: " + trackInfo[i].artist[0].name + "\n"+
+                    "Song: " + trackInfo[i].name + "\n" +
+                    "Preview URL: " + trackInfo[i].preview.url + "\n" +
+                    "Album: " + trackInfo[i].name + "\n" 
+
+                console.log(spotifyResults);
+                console.log(' ');
+             };
+         };
+        
+        } else {
+            console.log("error: "+ err);
+            return;
+        };
+        });
+    };
+};
+
+//movie function//
+
+function movieThis() {
+
+    var queryUrl= "http:www.omdbapi.com/?t=" + movieName + "&y=plot=short&apikey=trilogy";
+    
+    request(queryUrl, function (error, response, body) {
+
+        if(!error && response.statusCode === 200) {
+
+            var myMovieData = JSON.parse(body);
+            var queryUrlResults =
+                "Title: " + myMovieData.Title + "\n" +
+                "Year: " + myMovieData.Year + "\n" +
+                "IMDB Rating: " + myMovieData.Ratings[0].Value + "\n" +
+                "Origin Country: " + myMovieData.Country + "\n" +
+                "Language: " + myMovieData.Language + "\n" +
+                "Plot: " + myMovieData.Plot + "\n" +
+                "Actors: " + myMovieData.Actors + "\n" 
+
+            console.log(queryUrlResults);
+        }   else {
+            console.log("error: " + err);
+            return;
+        };
+    });
+};
+
+            fs.writeFile("random.txt", 'spotify-this-song,"The Sign"', function (err) {
+                var song = "spotify-this-song 'Wings of a Butterfly'"
+
+            if (err) {
+                return console.log(err);
+            };
+
+
+            console.log(song);
+        });
+            
+
+
