@@ -5,14 +5,15 @@ require("dotenv").config();
 var keys = require("./keys.js");
 var fs = require("fs");
 var Spotify =require('node-spotify-api');
-var spotify= new Spotify(keys.spotify);
+var spotify= new Spotify(keys);
 var request= require("request");
 var movieName = process.argv[3];
 var liriReturn = process.argv[2];
 var weather = require("weather-js");
-
+console.log(process.argv)
 switch (liriReturn) {
     case "spotify-this-song":
+    spotifyThisSong(process.argv[3])
     break;
     
     case "movie-this":
@@ -44,14 +45,15 @@ function spotifyThisSong(trackName) {
         query: songRequest
     },
     function(err,data){
+   
         if(!err){
             var trackInfo = data.tracks.items;
             for  (var i = 0;i <5; i++){
                 if (trackInfo[i]!=undefined){
                     var spotifyResults =
-                    "Artist: " + trackInfo[i].artist[0].name + "\n"+
+                    "Artists: " + trackInfo[i].artists[0].name + "\n"+
                     "Song: " + trackInfo[i].name + "\n" +
-                    "Preview URL: " + trackInfo[i].preview.url + "\n" +
+                    "Preview URL: " + trackInfo[i]. preview_url + "\n" +
                     "Album: " + trackInfo[i].name + "\n" 
 
                 console.log(spotifyResults);
